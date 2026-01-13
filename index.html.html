@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diplomado en Educación Superior - Neuroeducación</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .resource-card { transition: all 0.4s ease; cursor: pointer; border-width: 2px; }
+        .resource-card:hover { transform: translateY(-5px); border-color: #3b82f6; }
+        .resource-card.completed { border-color: #10b981; background-color: #f0fdf4; }
+        .modal { display: none; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); }
+        .formatted-content h3 { font-weight: bold; font-size: 1.1rem; margin-bottom: 0.5rem; color: #1e3a8a; }
+        .formatted-content p { margin-bottom: 0.75rem; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <header class="bg-blue-900 text-white py-8 px-6 shadow-lg">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-sm uppercase tracking-widest font-semibold opacity-80 mb-2">Diplomado en Educación Superior</h2>
+            <h1 class="text-3xl md:text-4xl font-bold">Enfoques Innovadores y Estrategias Didácticas</h1>
+            <div class="flex flex-wrap items-center gap-4 mt-4">
+                <button onclick="openChat()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center transition-all">
+                    <i class="fas fa-comments mr-2"></i> Abrir Asistente
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-10">
+        <article class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">SESIÓN 1: Neuroconfusión</h3>
+                <button onclick="listenObjective()" class="bg-slate-100 p-2 rounded-lg hover:bg-slate-200">
+                    <i class="fas fa-volume-up text-blue-600"></i> Escuchar
+                </button>
+            </div>
+
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8">
+                <h4 class="font-bold text-blue-800 mb-2">Objetivo de la sesión</h4>
+                <p id="session-objective" class="text-blue-900">
+                    Clarificar la diferencia entre Neuroeducación, Neuroaprendizaje y Neurodidáctica, evitando neuromitos.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div id="res-video" onclick="markAsCompleted('video')" class="resource-card bg-white p-6 rounded-xl text-center">
+                    <i class="fas fa-play text-red-500 text-2xl mb-2"></i>
+                    <h5 class="font-bold">Video Clase</h5>
+                </div>
+                <div id="res-info" onclick="markAsCompleted('info')" class="resource-card bg-white p-6 rounded-xl text-center">
+                    <i class="fas fa-image text-emerald-500 text-2xl mb-2"></i>
+                    <h5 class="font-bold">Infografía</h5>
+                </div>
+                <div id="res-doc" onclick="markAsCompleted('doc')" class="resource-card bg-white p-6 rounded-xl text-center">
+                    <i class="fas fa-file-alt text-blue-500 text-2xl mb-2"></i>
+                    <h5 class="font-bold">Lectura</h5>
+                </div>
+                <div onclick="tryEnterQuiz()" class="resource-card bg-white p-6 rounded-xl text-center">
+                    <i class="fas fa-tasks text-amber-500 text-2xl mb-2"></i>
+                    <h5 class="font-bold">Evaluación</h5>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <button onclick="showLocalCase()" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold w-full md:w-auto">
+                    Mostrar Caso Práctico
+                </button>
+            </div>
+
+            <div id="case-study-container" class="hidden mt-6 bg-indigo-50 border border-indigo-100 rounded-xl p-6 formatted-content">
+                <div id="case-study-content"></div>
+            </div>
+        </article>
+    </main>
+
+    <div id="warning-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-8 text-center max-w-sm">
+            <i class="fas fa-lock text-red-500 text-4xl mb-4"></i>
+            <h3 class="text-xl font-bold mb-4">¡Alto!</h3>
+            <p class="mb-6">Debes completar el Video, la Infografía y la Lectura antes de la evaluación.</p>
+            <button onclick="closeModal('warning-modal')" class="bg-slate-800 text-white px-6 py-2 rounded-lg">Entendido</button>
+        </div>
+    </div>
+
+    <div id="chat-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-md overflow-hidden flex flex-col" style="height: 500px;">
+            <div class="bg-indigo-600 p-4 text-white flex justify-between">
+                <span class="font-bold">Asistente Local</span>
+                <button onclick="closeModal('chat-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50">
+                <div class="bg-white p-3 rounded-lg text-sm border">Hola. Pregunta por: "Diferencia", "Mito" o "Estrategia".</div>
+            </div>
+            <div class="p-4 border-t flex gap-2">
+                <input type="text" id="chat-input" class="flex-1 border rounded px-3 py-2" placeholder="Escribe...">
+                <button onclick="sendLocalMessage()" class="bg-indigo-600 text-white px-4 py-2 rounded">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const progress = { video: false, info: false, doc: false };
+        const localCases = [
+            "<h3>Caso: El detective de frases</h3><p>La Profe Elena usa un juego de rol para enseñar sintaxe. Al añadir <strong>emoción y novedad</strong>, activa el sistema de recompensa del cerebro, facilitando la memoria a largo plazo.</p>",
+            "<h3>Caso: El Neuromito</h3><p>Un docente intenta enseñar solo al 'lado derecho' del cerebro. Esto es un <strong>mito</strong>; el cerebro siempre funciona como un todo integrado.</p>"
+        ];
+
+        function openChat() { document.getElementById('chat-modal').style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function markAsCompleted(type) {
+            progress[type] = true;
+            document.getElementById(`res-${type}`).classList.add('completed');
+        }
+        function tryEnterQuiz() {
+            if (!Object.values(progress).every(v => v)) {
+                document.getElementById('warning-modal').style.display = 'flex';
+            } else { alert("Abriendo evaluación..."); }
+        }
+        function showLocalCase() {
+            const container = document.getElementById('case-study-container');
+            container.classList.remove('hidden');
+            document.getElementById('case-study-content').innerHTML = localCases[Math.floor(Math.random() * localCases.length)];
+        }
+        function sendLocalMessage() {
+            const input = document.getElementById('chat-input');
+            const messages = document.getElementById('chat-messages');
+            const val = input.value.toLowerCase();
+            if(!val) return;
+            messages.innerHTML += `<div class="bg-indigo-100 p-2 rounded text-right ml-8">${input.value}</div>`;
+            let resp = "Para más detalles, consulta el PDF de la sesión.";
+            if(val.includes("diferencia")) resp = "Neuroeducación es la ciencia base, Neuroaprendizaje es el proceso del alumno y Neurodidáctica la herramienta del profe.";
+            if(val.includes("mito")) resp = "El mito más común es que usamos el 10% del cerebro. ¡Usamos el 100%!";
+            setTimeout(() => {
+                messages.innerHTML += `<div class="bg-white p-2 rounded border mr-8">${resp}</div>`;
+                messages.scrollTop = messages.scrollHeight;
+            }, 400);
+            input.value = "";
+        }
+        function listenObjective() {
+            const text = document.getElementById('session-objective').innerText;
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'es-ES';
+            window.speechSynthesis.speak(u);
+        }
+    </script>
+</body>
+</html>
