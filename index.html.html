@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diplomado en Educación Superior - Módulo Enfoques Innovadores</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .resource-card {
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border-width: 2px;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+            border-color: #3b82f6;
+        }
+
+        .resource-card.completed {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+
+        .modal {
+            display: none; 
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .warning-glow {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .ai-chat-window {
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .loading-dots:after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+
+        /* Estilos para el texto procesado de la IA */
+        .formatted-content h3 { font-weight: bold; font-size: 1.1rem; margin-bottom: 0.5rem; color: #1e3a8a; }
+        .formatted-content p { margin-bottom: 0.75rem; }
+        .formatted-content strong { font-weight: 700; color: #1e293b; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-blue-900 text-white py-8 px-6 shadow-lg">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-sm uppercase tracking-widest font-semibold opacity-80 mb-2">Diplomado en Educación Superior basado en la Formación por Competencias</h2>
+            <h1 class="text-3xl md:text-4xl font-bold">Enfoques Innovadores y Estrategias Didácticas</h1>
+            <div class="flex flex-wrap items-center gap-4 mt-4">
+                <p class="text-blue-100 italic">Repositorio de aprendizaje inteligente.</p>
+                <button id="btn-open-ai" onclick="openAIChat()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center transition-all shadow-md">
+                    <i class="fas fa-robot mr-2"></i> Consultar a la IA ✨
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-10">
+        <!-- Sesiones -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-book-reader mr-3 text-blue-600"></i>
+                Sesiones de Aprendizaje Autónomo
+            </h2>
+            
+            <div class="grid grid-cols-1 gap-6">
+                <!-- SESIÓN 1 -->
+                <article class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-6 md:p-8">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <div>
+                                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Módulo 1</span>
+                                <h3 class="text-2xl font-bold mt-2">SESIÓN 1: Neuroconfusión</h3>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="listenObjective()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-lg transition-colors" title="Escuchar objetivo">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                                <button onclick="toggleSession('session1-content')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors font-medium flex items-center">
+                                    Explorar Sesión <i class="fas fa-chevron-down ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Contenido Desplegable Sesión 1 -->
+                        <div id="session1-content" class="hidden border-t border-slate-100 pt-8">
+                            <div class="flex flex-col lg:flex-row gap-6 mb-8">
+                                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 flex-1">
+                                    <h4 class="font-bold text-blue-800 mb-2 flex items-center">
+                                        Objetivo de la sesión 
+                                    </h4>
+                                    <p id="session-objective" class="text-blue-900 leading-relaxed">
+                                        Clarificar y entender profundamente la diferencia conceptual y operativa entre los términos 
+                                        <strong>Neuroeducación</strong>, <strong>Neuroaprendizaje</strong> y <strong>Neurodidáctica</strong>, 
+                                        evitando la proliferación de neuromitos en la práctica docente.
+                                    </p>
+                                </div>
+                                <div class="lg:w-1/3 flex flex-col gap-3">
+                                    <button onclick="generateCaseStudy()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white p-4 rounded-xl font-bold shadow-md transition-all flex items-center justify-center">
+                                        <i class="fas fa-lightbulb mr-2"></i> Generar Caso Práctico ✨
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <div id="res-video" onclick="markAsCompleted('video')" class="resource-card bg-white border-slate-200 p-6 rounded-xl flex flex-col items-center text-center group">
+                                    <div class="absolute top-2 right-2 text-emerald-500 opacity-0 transition-opacity" id="check-video">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4 group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                        <i class="fas fa-play text-2xl"></i>
+                                    </div>
+                                    <h5 class="font-bold text-lg mb-2">Video</h5>
+                                    <p class="text-sm text-slate-500">Clase magistral sobre conceptos clave.</p>
+                                </div>
+
+                                <div id="res-info" onclick="markAsCompleted('info')" class="resource-card bg-white border-slate-200 p-6 rounded-xl flex flex-col items-center text-center group">
+                                    <div class="absolute top-2 right-2 text-emerald-500 opacity-0 transition-opacity" id="check-info">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                                        <i class="fas fa-image text-2xl"></i>
+                                    </div>
+                                    <h5 class="font-bold text-lg mb-2">Infografía</h5>
+                                    <p class="text-sm text-slate-500">Mapa comparativo de los tres pilares.</p>
+                                </div>
+
+                                <div id="res-doc" onclick="markAsCompleted('doc')" class="resource-card bg-white border-slate-200 p-6 rounded-xl flex flex-col items-center text-center group">
+                                    <div class="absolute top-2 right-2 text-emerald-500 opacity-0 transition-opacity" id="check-doc">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                                        <i class="fas fa-file-alt text-2xl"></i>
+                                    </div>
+                                    <h5 class="font-bold text-lg mb-2">Lectura</h5>
+                                    <p class="text-sm text-slate-500">Documento de profundización teórica.</p>
+                                </div>
+
+                                <div onclick="tryEnterQuiz()" class="resource-card bg-white border-slate-200 p-6 rounded-xl flex flex-col items-center text-center group">
+                                    <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mb-4 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                                        <i class="fas fa-tasks text-2xl"></i>
+                                    </div>
+                                    <h5 class="font-bold text-lg mb-2">Evaluación</h5>
+                                    <p class="text-sm text-slate-500">Cuestionario de verificación.</p>
+                                </div>
+                            </div>
+
+                            <!-- Area para Caso de IA -->
+                            <div id="case-study-container" class="hidden mt-8 bg-indigo-50 border border-indigo-100 rounded-xl p-6">
+                                <div class="flex justify-between items-start mb-4">
+                                    <h4 class="font-bold text-indigo-800">Caso Práctico Generado por IA ✨</h4>
+                                    <button onclick="document.getElementById('case-study-container').classList.add('hidden')" class="text-indigo-400 hover:text-indigo-600"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div id="case-study-content" class="text-slate-700 text-sm leading-relaxed formatted-content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modales -->
+    <div id="warning-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border-t-4 border-red-500">
+            <div class="p-8 text-center">
+                <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6 warning-glow">
+                    <i class="fas fa-lock text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">Acceso Restringido</h3>
+                <p class="text-slate-600 mb-8 leading-relaxed italic">"El aprendizaje sólido requiere de un proceso secuencial."</p>
+                <p class="text-slate-600 mb-8">No puedes realizar la evaluación hasta haber explorado los 3 materiales anteriores.</p>
+                <button onclick="closeModal('warning-modal')" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl hover:bg-slate-900 transition-colors">Entendido, volveré a revisar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ai-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden flex flex-col ai-chat-window">
+            <div class="bg-indigo-600 p-4 text-white flex justify-between items-center">
+                <h3 class="font-bold flex items-center"><i class="fas fa-robot mr-2"></i> Asistente de Neuroeducación ✨</h3>
+                <button onclick="closeModal('ai-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="chat-messages" class="chat-messages p-6 bg-slate-50 space-y-4">
+                <div class="bg-white p-3 rounded-lg shadow-sm border border-slate-200 text-sm">
+                    ¡Hola! Soy tu asistente de IA. ¿Tienes dudas sobre la diferencia entre Neuroaprendizaje y Neurodidáctica? Pregúntame lo que necesites.
+                </div>
+            </div>
+            <div class="p-4 border-t flex gap-2 bg-white">
+                <input type="text" id="chat-input" placeholder="Escribe tu duda aquí..." class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button onclick="sendMessage()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-all">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = ""; 
+
+        const progress = { video: false, info: false, doc: false };
+
+        window.onload = function() {
+            document.getElementById('warning-modal').style.display = 'none';
+            document.getElementById('ai-modal').style.display = 'none';
+        };
+
+        function toggleSession(id) { document.getElementById(id).classList.toggle('hidden'); }
+        function openAIChat() { document.getElementById('ai-modal').style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function markAsCompleted(type) {
+            progress[type] = true;
+            document.getElementById(`res-${type}`).classList.add('completed');
+            document.getElementById(`check-${type}`).classList.replace('opacity-0', 'opacity-100');
+        }
+
+        function tryEnterQuiz() {
+            if (!Object.values(progress).every(val => val === true)) {
+                document.getElementById('warning-modal').style.display = 'flex';
+            } else {
+                alert("Accediendo al cuestionario final...");
+            }
+        }
+
+        // --- FUNCIÓN PARA LIMPIAR MARKDOWN ---
+        function formatMarkdown(text) {
+            return text
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>') // Títulos
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Negritas
+                .replace(/\*(.*?)\*/g, '<em>$1</em>') // Cursivas
+                .replace(/\n/g, '<br>'); // Saltos de línea
+        }
+
+        // --- FUNCIONES GEMINI API ---
+        async function callGemini(prompt, systemInstruction = "") {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] }
+            };
+
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text || "No se pudo procesar la solicitud.";
+                } catch (e) {
+                    await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+                }
+            }
+            return "Error de conexión.";
+        }
+
+        async function generateCaseStudy() {
+            const container = document.getElementById('case-study-container');
+            const content = document.getElementById('case-study-content');
+            container.classList.remove('hidden');
+            container.classList.add('animate-pulse');
+            content.innerText = "Generando un caso educativo...";
+
+            const prompt = "Genera un caso práctico breve (máximo 120 palabras) para un docente donde deba aplicar Neurodidáctica vs Neuroaprendizaje. Incluye un título con ### y usa negritas para conceptos clave.";
+            const system = "Eres un tutor experto en Neuroeducación.";
+            
+            const result = await callGemini(prompt, system);
+            content.innerHTML = formatMarkdown(result); // Usamos la nueva función
+            container.classList.remove('animate-pulse');
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const messages = document.getElementById('chat-messages');
+            const text = input.value.trim();
+            if (!text) return;
+
+            messages.innerHTML += `<div class="bg-indigo-100 p-3 rounded-lg self-end ml-8 text-sm text-indigo-900 font-medium">${text}</div>`;
+            input.value = "";
+            messages.scrollTop = messages.scrollHeight;
+
+            const aiId = "ai-" + Date.now();
+            messages.innerHTML += `<div id="${aiId}" class="bg-white p-3 rounded-lg shadow-sm border border-slate-200 text-sm italic loading-dots formatted-content">Analizando</div>`;
+            
+            const system = "Eres un tutor experto. Responde sobre Neuroeducación de forma concisa usando negritas para puntos clave.";
+            const response = await callGemini(text, system);
+            
+            const aiDiv = document.getElementById(aiId);
+            aiDiv.classList.remove('italic', 'loading-dots');
+            aiDiv.innerHTML = formatMarkdown(response); // Usamos la nueva función
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        // TTS y PCMtoWAV permanecen igual...
+        async function listenObjective() {
+            const textToSpeak = document.getElementById('session-objective').innerText;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: `Say: ${textToSpeak}` }] }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Puck" } } }
+                }
+            };
+            try {
+                const response = await fetch(url, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await response.json();
+                const pcmData = result.candidates[0].content.parts[0].inlineData.data;
+                const audioBlob = pcmToWav(pcmData, 24000);
+                const audio = new Audio(URL.createObjectURL(audioBlob));
+                audio.play();
+            } catch (e) { console.error(e); }
+        }
+
+        function pcmToWav(base64Data, sampleRate) {
+            const byteCharacters = atob(base64Data);
+            const buffer = new Uint8Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) buffer[i] = byteCharacters.charCodeAt(i);
+            const wavBuffer = new ArrayBuffer(44 + buffer.byteLength);
+            const wavView = new DataView(wavBuffer);
+            const writeString = (o, s) => { for (let i = 0; i < s.length; i++) wavView.setUint8(o + i, s.charCodeAt(i)); };
+            writeString(0, 'RIFF'); wavView.setUint32(4, 32 + buffer.byteLength, true); writeString(8, 'WAVE'); writeString(12, 'fmt ');
+            wavView.setUint32(16, 16, true); wavView.setUint16(20, 1, true); wavView.setUint16(22, 1, true); wavView.setUint32(24, sampleRate, true);
+            wavView.setUint32(28, sampleRate * 2, true); wavView.setUint16(32, 2, true); wavView.setUint16(34, 16, true); writeString(36, 'data');
+            wavView.setUint32(40, buffer.byteLength, true); new Uint8Array(wavBuffer, 44).set(buffer);
+            return new Blob([wavBuffer], { type: 'audio/wav' });
+        }
+    </script>
+</body>
+</html>
